@@ -32,17 +32,17 @@ class GameScene extends Phaser.Scene {
 
     this.load.image(
       "room_builder",
-      "src/assets/Modern tiles_Free/interiors/16x16/Room_Builder_free_16x16.png"
+      "src/assets/Room_Builder_free_16x16.png"
     );
     this.load.image(
       "interiors",
-      "src/assets/Modern tiles_Free/interiors/16x16/Interiors_free_16x16.png"
+      "src/assets/Interiors_free_16x16.png"
     );
     this.load.tilemapTiledJSON("tilemap", "src/assets/room.json");
 
     this.load.spritesheet(
       "playerSpritesheet",
-      "src/assets/Modern tiles_Free/characters/Adam_16x16.png",
+      "src/assets/Adam_16x16.png",
       {
         frameWidth: 16,
         frameHeight: 32,
