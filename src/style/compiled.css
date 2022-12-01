@@ -1,13 +1,47 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
+  font-family: "Lato", sans-serif;
+}
+
+.flex {
+  display: flex;
+}
+
+.v-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 #game-container {
   height: 100vh;
   width: 100vw;
   overflow: hidden;
+  position: relative;
+}
+
+.nametag {
+  position: absolute;
+  padding: 2px 7px 2px 16px;
+  background-color: rgba(51, 51, 51, 0.7);
+  color: #FFFFFF;
+  font-size: 12px;
+  border-radius: 100px;
+  user-select: none;
+  transform: translateY(-30px) translateX(-50%);
+}
+.nametag .bubble {
+  background-color: #6FCF97;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  position: absolute;
+  left: 7px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /*# sourceMappingURL=compiled.css.map */
