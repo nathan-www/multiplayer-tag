@@ -143,7 +143,7 @@ function syncSelf() {
 }
 
 game.loaded.then(() => {
-  multiplayerClient = new Multiplayer("localhost:5002");
+  multiplayerClient = new Multiplayer("188.166.20.67:5222");
 
   multiplayerClient.onError((err) => {
     alert(err);
