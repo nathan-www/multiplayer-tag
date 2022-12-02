@@ -11,6 +11,9 @@ let tagPlayer = null;
 let tagPlayerStart = 0;
 let lastTagTime = 0;
 
+let ordinarySpeed = 80;
+let tagSpeed = 83;
+
 function secondsBetween(timestamp) {
   return Math.abs(+new Date() - timestamp) / 1000;
 }
@@ -92,7 +95,8 @@ function updateLocalPlayer(remotePlayer) {
     localPlayer.teleport(remotePlayer.position.x, remotePlayer.position.y);
     localPlayer.direction = remotePlayer.direction;
     if (remotePlayer.state == "walking") {
-      localPlayer.walk(remotePlayer.direction);
+      let speed = tagPlayer == remotePlayer.username ? tagSpeed:ordinarySpeed;
+      localPlayer.walk(remotePlayer.direction, speed);
     } else if (remotePlayer.state == "standing") {
       localPlayer.stopWalking();
     }
@@ -117,15 +121,16 @@ function spawnSelf(username) {
       //Keyboard controls
 
       let canMove = tagStatus().countdown == 0 || tagPlayer !== myself.username;
+      let speed = tagPlayer == myself.username ? tagSpeed:ordinarySpeed;
 
       if (keysDown.includes("ArrowUp") && canMove) {
-        myself.walk("up");
+        myself.walk("up", speed);
       } else if (keysDown.includes("ArrowDown") && canMove) {
-        myself.walk("down");
+        myself.walk("down", speed);
       } else if (keysDown.includes("ArrowLeft") && canMove) {
-        myself.walk("left");
+        myself.walk("left", speed);
       } else if (keysDown.includes("ArrowRight") && canMove) {
-        myself.walk("right");
+        myself.walk("right", speed);
       } else {
         myself.stopWalking();
       }
