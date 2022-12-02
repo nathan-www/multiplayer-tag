@@ -1,6 +1,8 @@
 import { WebSocketServer } from "ws";
 
-const server = new WebSocketServer({ port: 5002 });
+const server = new WebSocketServer({ port: 5222 });
+
+console.log("WSS running on port 5222");
 
 server.on("connection", (ws) => {
   ws.on("message", function message(data) {
@@ -30,10 +32,10 @@ function receive(message) {
       state: messageObj.player.state,
       direction: messageObj.player.direction,
       lastUpdate: +new Date(),
-    }
+    };
     syncPlayer(messageObj.player.username);
-  } else if(messageObj.type = "playerTagged"){
-      setTagUser(messageObj.username);
+  } else if ((messageObj.type = "playerTagged")) {
+    setTagUser(messageObj.username);
   }
 }
 
@@ -67,7 +69,7 @@ function setTagUser(username) {
   if (username == null) {
     tagPlayerStart = 0;
   } else {
-    tagPlayerStart = +new Date() + (tagPlayerDelay * 1000);
+    tagPlayerStart = +new Date() + tagPlayerDelay * 1000;
   }
   tagPlayer = username;
   broadcastTagPlayer();
