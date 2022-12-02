@@ -12,7 +12,7 @@ let tagPlayerStart = 0;
 let lastTagTime = 0;
 
 let ordinarySpeed = 80;
-let tagSpeed = 83;
+let tagSpeed = 90;
 
 function secondsBetween(timestamp) {
   return Math.abs(+new Date() - timestamp) / 1000;
