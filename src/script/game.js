@@ -7,6 +7,51 @@ let localPlayers = {};
 let myself;
 let multiplayerClient;
 
+let tagPlayer = null;
+let tagPlayerStart = 0;
+
+function secondsBetween(timestamp) {
+  return Math.abs(+new Date() - timestamp) / 1000;
+}
+
+function tagStatus() {
+  if (tagPlayer == null) {
+    return {
+      player: null,
+      countdown: 0,
+    };
+  } else if (tagPlayerStart > +new Date()) {
+    return {
+      player: tagPlayer,
+      countdown: Math.ceil(secondsBetween(tagPlayerStart)),
+    };
+  } else {
+    return {
+      player: tagPlayer,
+      countdown: 0,
+    };
+  }
+}
+
+function updateAnnouncement() {
+  let announcementEl = document.querySelector("h1.announcement");
+  let status = tagStatus();
+
+  if (Object.keys(localPlayers).length < 2 && status.player == null) {
+    announcementEl.innerText = "Waiting for more players...";
+    announcementEl.style.display = "block";
+  } else if (status.player == null) {
+    announcementEl.style.display = "none";
+  } else if (status.countdown > 0) {
+    announcementEl.innerText =
+      status.player + " is it! (" + status.countdown + ")";
+    announcementEl.style.display = "block";
+  } else {
+    announcementEl.innerText = status.player + " is it!";
+    announcementEl.style.display = "block";
+  }
+}
+
 function updateLocalPlayer(remotePlayer) {
   //Do not update own state from server
   if (myself == undefined || remotePlayer.username !== myself.username) {
@@ -40,6 +85,7 @@ function spawnSelf(username) {
     myself.onUpdateState(() => {
       syncSelf();
     });
+    syncSelf();
 
     setInterval(() => {
       //Keyboard controls
@@ -59,7 +105,7 @@ function spawnSelf(username) {
     setInterval(() => {
       //Periodically sync own state
       syncSelf();
-    }, 800);
+    }, 500);
   }
 }
 
@@ -84,21 +130,34 @@ game.loaded.then(() => {
   });
 
   multiplayerClient.onRemovePlayer((username) => {
-      //Remove inactive player
-      if(localPlayers.hasOwnProperty(username)){
-          localPlayers[username].kill();
-          delete localPlayers[username];
-      }
-  })
+    //Remove inactive player
+    if (
+      localPlayers.hasOwnProperty(username) &&
+      (myself == undefined || myself.username !== username)
+    ) {
+      localPlayers[username].kill();
+      delete localPlayers[username];
+    }
+  });
+
+  multiplayerClient.onTagPlayer((obj) => {
+    //Set the current tag user
+    tagPlayer = obj.username;
+    tagPlayerStart = obj.start;
+    console.log(tagPlayer + " is it!");
+  });
 
   multiplayerClient.onReady(() => {
     spawnSelf(prompt("Enter username: "));
   });
 
-  //Nametags follow player
   setInterval(() => {
+    //Nametags follow player
     Object.values(localPlayers).forEach((player) => {
-      player.nametagFollow();
+      player.nametagUpdate();
     });
+
+    //Update announcement text
+    updateAnnouncement();
   }, 10);
 });

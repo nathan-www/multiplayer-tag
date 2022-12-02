@@ -1,5 +1,5 @@
 @import 'variables';
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato&family=VT323&display=swap');
 
 * {
   margin: 0px;
@@ -46,4 +46,19 @@
     top: 50%;
     transform: translateY(-50%);
   }
+}
+
+h1.announcement{
+  color: $black-90;
+  position: fixed;
+  font-size: 25px;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-family: 'VT323', monospace;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+  background-color: rgba($black-100,0.5);
+  padding: 7px 30px;
+  border-radius: 50px;
 }

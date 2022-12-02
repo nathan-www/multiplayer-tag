@@ -5,6 +5,7 @@ class Multiplayer {
     [this.onDisconnect, this.callDisconnect] = this.tanoy();
     [this.onSyncPlayer, this.callSyncPlayer] = this.tanoy();
     [this.onRemovePlayer, this.callRemovePlayer] = this.tanoy();
+    [this.onTagPlayer, this.callTagPlayer] = this.tanoy();
 
     this.socket = new WebSocket("ws://" + host);
 
@@ -32,23 +33,28 @@ class Multiplayer {
   receive(message) {
     let messageObj = JSON.parse(message.data);
 
-    if(messageObj.type == "syncPlayer"){
-        this.callSyncPlayer(messageObj.player)
-    } else if(messageObj.type == "removePlayer"){
-        this.callRemovePlayer(messageObj.username)
+    if (messageObj.type == "syncPlayer") {
+      this.callSyncPlayer(messageObj.player);
+    } else if (messageObj.type == "removePlayer") {
+      this.callRemovePlayer(messageObj.username);
+    } else if (messageObj.type == "tagPlayer") {
+      this.callTagPlayer({
+        username: messageObj.username,
+        start: messageObj.start,
+      });
     }
   }
 
-  syncSelf(myself){
+  syncSelf(myself) {
     this.send({
-        type: "playerUpdate",
-        player: {
-            username: myself.username,
-            position: myself.getPos(),
-            state: myself.state,
-            direction: myself.direction
-        }
-    })
+      type: "playerUpdate",
+      player: {
+        username: myself.username,
+        position: myself.getPos(),
+        state: myself.state,
+        direction: myself.direction,
+      },
+    });
   }
 
   tanoy() {

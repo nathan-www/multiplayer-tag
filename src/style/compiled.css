@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato&family=VT323&display=swap");
 * {
   margin: 0px;
   padding: 0px;
@@ -42,6 +42,21 @@
   left: 7px;
   top: 50%;
   transform: translateY(-50%);
+}
+
+h1.announcement {
+  color: #252525;
+  position: fixed;
+  font-size: 25px;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 5;
+  font-family: "VT323", monospace;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
+  background-color: rgba(26, 25, 25, 0.5);
+  padding: 7px 30px;
+  border-radius: 50px;
 }
 
 /*# sourceMappingURL=compiled.css.map */

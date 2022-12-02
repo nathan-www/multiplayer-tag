@@ -9,6 +9,13 @@ server.on("connection", (ws) => {
 });
 
 let players = {};
+let tagPlayer = null;
+let tagPlayerStart = 0;
+let tagPlayerDelay = 6;
+
+function secondsSince(timestamp) {
+  return (+new Date() - timestamp) / 1000;
+}
 
 function receive(message) {
   let messageObj = JSON.parse(message);
@@ -24,7 +31,6 @@ function receive(message) {
       direction: messageObj.player.direction,
       lastUpdate: +new Date(),
     };
-
     syncPlayer(messageObj.player.username);
   }
 }
@@ -43,20 +49,58 @@ function syncPlayer(username) {
 }
 
 function removePlayer(username) {
-    console.log("killed " + username);
-    broadcast({
-      type: "removePlayer",
-      username: username,
-    });
+  delete players[username];
+
+  if (tagPlayer == username) {
+    setTagUser(null);
   }
 
-setInterval(() => {
-    //Remove inactive players
-    Object.values(players).forEach((player) => {
+  broadcast({
+    type: "removePlayer",
+    username: username,
+  });
+}
 
-        if((+(new Date()) - player.lastUpdate)/1000 > 4){
-            removePlayer(player.username);
-            delete players[player.username];
-        }
-    })
-}, 2000)
+function setTagUser(username) {
+  if (username == null) {
+    tagPlayerStart = 0;
+  } else {
+    tagPlayerStart = +new Date() + (tagPlayerDelay * 1000);
+  }
+  tagPlayer = username;
+  broadcastTagPlayer();
+}
+
+function broadcastTagPlayer() {
+  broadcast({
+    type: "tagPlayer",
+    username: tagPlayer,
+    start: tagPlayerStart,
+  });
+}
+
+setInterval(() => {
+  //Remove inactive players
+  Object.values(players).forEach((player) => {
+    if (secondsSince(player.lastUpdate) > 2.5) {
+      removePlayer(player.username);
+    }
+  });
+
+  //Set tag user if no tag user
+  if (Object.keys(players).length > 1 && tagPlayer == null) {
+    setTagUser(
+      Object.keys(players)[
+        Math.floor(Math.random() * Object.keys(players).length)
+      ]
+    );
+  }
+
+  //Remove tag if only 1 player
+  if (tagPlayer !== null && Object.keys(players).length < 2) {
+    setTagUser(null);
+  }
+
+  //Broadcast tag player
+  broadcastTagPlayer();
+}, 1000);
