@@ -9,6 +9,7 @@ let multiplayerClient;
 
 let tagPlayer = null;
 let tagPlayerStart = 0;
+let lastTagTime = 0;
 
 function secondsBetween(timestamp) {
   return Math.abs(+new Date() - timestamp) / 1000;
@@ -30,6 +31,25 @@ function tagStatus() {
       player: tagPlayer,
       countdown: 0,
     };
+  }
+}
+
+function handlePlayerCollision(collision) {
+  if (
+    tagPlayer !== null &&
+    tagStatus().countdown == 0 &&
+    secondsBetween(lastTagTime) > 1
+  ) {
+    if (collision[0] == tagPlayer || collision[1] == tagPlayer) {
+      //Tag happened!
+      lastTagTime = +new Date();
+
+      if (collision[0] == tagPlayer) {
+        multiplayerClient.tagged(collision[1]);
+      } else {
+        multiplayerClient.tagged(collision[0]);
+      }
+    }
   }
 }
 
@@ -59,7 +79,10 @@ function updateLocalPlayer(remotePlayer) {
 
     //Create local player if doesn't exist
     if (!localPlayers.hasOwnProperty(remotePlayer.username)) {
-      localPlayer = new Player(remotePlayer.username, game.scene);
+      localPlayer = new Player(remotePlayer.username, game.scene, localPlayers);
+      localPlayer.onPlayerCollision((collision) => {
+        handlePlayerCollision(collision);
+      });
       localPlayers[localPlayer.username] = localPlayer;
     } else {
       localPlayer = localPlayers[remotePlayer.username];
@@ -79,7 +102,10 @@ function updateLocalPlayer(remotePlayer) {
 //Create own player
 function spawnSelf(username) {
   if (myself == undefined && username.length > 0) {
-    myself = new Player(username, game.scene);
+    myself = new Player(username, game.scene, localPlayers);
+    myself.onPlayerCollision((collision) => {
+      handlePlayerCollision(collision);
+    });
     localPlayers[myself.username] = myself;
 
     myself.onUpdateState(() => {
@@ -89,13 +115,16 @@ function spawnSelf(username) {
 
     setInterval(() => {
       //Keyboard controls
-      if (keysDown.includes("ArrowUp")) {
+
+      let canMove = tagStatus().countdown == 0 || tagPlayer !== myself.username;
+
+      if (keysDown.includes("ArrowUp") && canMove) {
         myself.walk("up");
-      } else if (keysDown.includes("ArrowDown")) {
+      } else if (keysDown.includes("ArrowDown") && canMove) {
         myself.walk("down");
-      } else if (keysDown.includes("ArrowLeft")) {
+      } else if (keysDown.includes("ArrowLeft") && canMove) {
         myself.walk("left");
-      } else if (keysDown.includes("ArrowRight")) {
+      } else if (keysDown.includes("ArrowRight") && canMove) {
         myself.walk("right");
       } else {
         myself.stopWalking();
@@ -144,7 +173,6 @@ game.loaded.then(() => {
     //Set the current tag user
     tagPlayer = obj.username;
     tagPlayerStart = obj.start;
-    console.log(tagPlayer + " is it!");
   });
 
   multiplayerClient.onReady(() => {
@@ -152,9 +180,9 @@ game.loaded.then(() => {
   });
 
   setInterval(() => {
-    //Nametags follow player
     Object.values(localPlayers).forEach((player) => {
-      player.nametagUpdate();
+      player.nametagUpdate(tagStatus()); //Nametags follow player
+      player.haloFollow(); //Update invisible halo pos
     });
 
     //Update announcement text

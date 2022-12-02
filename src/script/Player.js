@@ -1,17 +1,36 @@
 class Player {
-  constructor(username, scene, myself = false) {
+  constructor(username, scene, localPlayers) {
     [this.onUpdateState, this.callUpdateState] = this.tanoy();
+    [this.onPlayerCollision, this.callPlayerCollision] = this.tanoy();
 
     this.scene = scene;
     this.direction = "down";
     this.state = "standing";
     this.username = username;
+
     this.sprite = scene.physics.add.sprite(0, 0, "playerSpritesheet");
     this.sprite.setCircle(1, 8, 22);
+
+    //Create invisible halo sprite - for player-player overlap detection
+    this.spriteHalo = scene.physics.add.sprite(0, 0, "playerSpritesheet");
+    this.spriteHalo.visible = false;
+
     this.scene.physics.add.collider(this.sprite, this.scene.collisionLayer);
     this.stopWalking();
     this.teleport(185, 115); //Spawn in a covenient place
     this.createNametag();
+
+    //Add colliders with all other players
+    Object.values(localPlayers).forEach((player) => {
+      this.scene.physics.add.overlap(player.spriteHalo, this.spriteHalo, () => {
+        this.callPlayerCollision([username, player.username]);
+      });
+    });
+  }
+
+  //Invisible halo sprite follow
+  haloFollow() {
+    this.spriteHalo.setPosition(this.sprite.x, this.sprite.y);
   }
 
   animate(type, direction) {
@@ -24,7 +43,6 @@ class Player {
   createNametag() {
     this.nametag = document.createElement("div");
     this.nametag.classList.add("nametag");
-    this.nametag.innerText = this.username;
 
     document.querySelector("#game-container").appendChild(this.nametag);
 
@@ -32,22 +50,43 @@ class Player {
     bubble.classList.add("bubble");
     this.nametag.appendChild(bubble);
 
-    this.nametagFollow();
+    let name = document.createElement("p");
+    this.nametag.appendChild(name);
+    name.innerText = this.username;
+
+    let tagStatus = document.createElement("p");
+    tagStatus.classList.add("tag-status");
+    this.nametag.appendChild(tagStatus);
+    tagStatus.innerText = "";
+
+    this.nametagUpdate();
   }
 
-  destroyNametag(){
+  nametagUpdate(tag = null) {
+    let pos = this.getPos();
+    this.nametag.style.left = pos.containerX + "px";
+    this.nametag.style.top = pos.containerY + "px";
+
+    if (tag !== null && tag.player == this.username && tag.countdown == 0) {
+      this.nametag.querySelector(".tag-status").innerText = "IT!";
+    } else if (
+      tag !== null &&
+      tag.player == this.username &&
+      tag.countdown > 0
+    ) {
+      this.nametag.querySelector(".tag-status").innerText = tag.countdown;
+    } else {
+      this.nametag.querySelector(".tag-status").innerText = "";
+    }
+  }
+
+  destroyNametag() {
     this.nametag.remove();
   }
 
   kill() {
     this.sprite.destroy();
     this.destroyNametag();
-  }
-
-  nametagFollow() {
-    let pos = this.getPos();
-    this.nametag.style.left = pos.containerX + "px";
-    this.nametag.style.top = pos.containerY + "px";
   }
 
   updateState() {

@@ -45,6 +45,13 @@ class Multiplayer {
     }
   }
 
+  tagged(username){
+      this.send({
+          type: "playerTagged",
+          username: username
+      })
+  }
+
   syncSelf(myself) {
     this.send({
       type: "playerUpdate",

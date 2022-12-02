@@ -1,18 +1,18 @@
-@import 'variables';
-@import url('https://fonts.googleapis.com/css2?family=Lato&family=VT323&display=swap');
+@import "variables";
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=VT323&display=swap");
 
 * {
   margin: 0px;
   padding: 0px;
   box-sizing: border-box;
-  font-family: 'Lato', sans-serif;
+  font-family: "Lato", sans-serif;
 }
 
-.flex{
+.flex {
   display: flex;
 }
 
-.v-center{
+.v-center {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -25,8 +25,7 @@
   position: relative;
 }
 
-
-.nametag{
+.nametag {
   position: absolute;
   padding: 2px 7px 2px 16px;
   background-color: rgba($black-80, 0.7);
@@ -35,8 +34,27 @@
   border-radius: 100px;
   user-select: none;
   transform: translateY(-30px) translateX(-50%);
+  display: flex;
+  width: fit-content;
+  flex-wrap: nowrap;
 
-  .bubble{
+  p{
+    white-space: nowrap;
+  }
+
+  .tag-status {
+    font-weight: 700;
+    font-size: 10px;
+    margin: auto 0px;
+    margin-left: 5px;
+    color: $red;
+
+    &:empty{
+      margin-left: 0px;
+    }
+  }
+
+  .bubble {
     background-color: $green;
     width: 5px;
     height: 5px;
@@ -48,7 +66,7 @@
   }
 }
 
-h1.announcement{
+h1.announcement {
   color: $black-90;
   position: fixed;
   font-size: 25px;
@@ -56,9 +74,10 @@ h1.announcement{
   left: 50%;
   transform: translateX(-50%);
   z-index: 5;
-  font-family: 'VT323', monospace;
-  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff, 1px 1px 0 #fff;
-  background-color: rgba($black-100,0.5);
+  font-family: "VT323", monospace;
+  text-shadow: -1px -1px 0 #fff, 1px -1px 0 #fff, -1px 1px 0 #fff,
+    1px 1px 0 #fff;
+  background-color: rgba($black-100, 0.5);
   padding: 7px 30px;
   border-radius: 50px;
 }

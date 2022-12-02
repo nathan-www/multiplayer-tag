@@ -1,4 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Lato&family=VT323&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=VT323&display=swap");
 * {
   margin: 0px;
   padding: 0px;
@@ -32,6 +32,22 @@
   border-radius: 100px;
   user-select: none;
   transform: translateY(-30px) translateX(-50%);
+  display: flex;
+  width: fit-content;
+  flex-wrap: nowrap;
+}
+.nametag p {
+  white-space: nowrap;
+}
+.nametag .tag-status {
+  font-weight: 700;
+  font-size: 10px;
+  margin: auto 0px;
+  margin-left: 5px;
+  color: #fa4040;
+}
+.nametag .tag-status:empty {
+  margin-left: 0px;
 }
 .nametag .bubble {
   background-color: #6FCF97;

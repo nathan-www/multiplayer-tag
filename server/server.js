@@ -11,7 +11,7 @@ server.on("connection", (ws) => {
 let players = {};
 let tagPlayer = null;
 let tagPlayerStart = 0;
-let tagPlayerDelay = 6;
+let tagPlayerDelay = 5;
 
 function secondsSince(timestamp) {
   return (+new Date() - timestamp) / 1000;
@@ -30,8 +30,10 @@ function receive(message) {
       state: messageObj.player.state,
       direction: messageObj.player.direction,
       lastUpdate: +new Date(),
-    };
+    }
     syncPlayer(messageObj.player.username);
+  } else if(messageObj.type = "playerTagged"){
+      setTagUser(messageObj.username);
   }
 }
 
